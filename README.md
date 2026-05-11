@@ -1,3 +1,7 @@
+<video src="./demo.mov" controls></video>
+
+https://github.com/PierreCapo/convex-auth-sdk56-repro/raw/main/demo.mov
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
