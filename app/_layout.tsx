@@ -1,24 +1,32 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import { ConvexReactClient } from "convex/react";
+import { Stack } from "expo-router";
+import { createMMKV } from "react-native-mmkv";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+const storage = createMMKV({ id: "AUTH" });
 
-export const unstable_settings = {
-  anchor: '(tabs)',
+const ConvexStorageClient = {
+  getItem: async (key: string) => storage.getString(key),
+  setItem: async (key: string, value: string) => {
+    storage.set(key, value);
+  },
+  removeItem: async (key: string) => {
+    storage.remove(key);
+  },
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
+  unsavedChangesWarning: false,
+  verbose: true,
+  logger: true,
+});
 
+export default function RootLayout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ConvexAuthProvider client={convex} storage={ConvexStorageClient}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    </ConvexAuthProvider>
   );
 }
